@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+    http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd"
+       default-lazy-init="false">
+    <dubbo:monitor protocol="registry" password="admin" username="admin"/>
+    <!-- 提供方应用名称信息，这个相当于起一个名字，我们dubbo管理页面比较清晰是哪个应用暴露出来的 -->
+    <dubbo:application name="fastdfs-fileupload-hession" logger="slf4j"></dubbo:application>
+
+
+    <!-- 使用zookeeper注册中心暴露服务地址 -->
+    <dubbo:registry port="18099" protocol="zookeeper" address="zookeeper://182.137.14.218:18099" check="false"
+                    subscribe="false"></dubbo:registry>
+    <!--<dubbo:registry address="N/A"/>-->
+    <!-- 具体的实现bean,方式1:通过注入的方式 -->
+    <!--<dubbo:annotation package="com.scbd.query.map.util.*"/>-->
+    <!-- 具体的实现bean -->
+    <bean id="fastFdfsUpload" class="com.fastdfs.file.upload.FileUtilsImpl"/>
+    <dubbo:protocol name="hessian" port="10019" />
+
+
+    <!-- 声明需要暴露的服务接口 -->
+    <dubbo:service interface="com.fastdfs.file.upload.FileUtils" timeout="10000"
+                   ref="fastFdfsUpload" async="false" protocol="hessian" owner="zuoshunjian">
+
+    </dubbo:service>
+
+</beans>
